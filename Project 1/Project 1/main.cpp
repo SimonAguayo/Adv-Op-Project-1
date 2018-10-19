@@ -6,6 +6,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -14,10 +15,11 @@ using namespace std;
 
 class PCB {
 public:
-    int Process_id;
-    int Arrival_time;
-    int state;
-    int pc_line;
+    string Process_id;
+    string Arrival_time;
+    string State;
+    string PC_line;
+    string Priority;
 };
 
 // proccess image Class
@@ -26,10 +28,38 @@ public:
     PCB pcb_data;
     string code;
     
-    // is this a constructor?????
+    // Constructor
     Process(string process){
         // set PCB data, code and others
+        string delimiter = ", ";
+        string token;
+        
+        int pos = 0;
+        
+        // Store process ID
+        pos = process.find(delimiter);
+        token = process.substr(0, pos);
+        pcb_data.Process_id = token;
+        process.erase(0, pos + delimiter.length());
+        
+        // Store arrival time
+        pos = process.find(delimiter);
+        token = process.substr(0, pos);
+        pcb_data.Arrival_time = token;
+        process.erase(0, pos + delimiter.length());
+        
+        // store priority
+        pos = process.find(delimiter);
+        token = process.substr(0, pos);
+        pcb_data.Priority = token;
+        process.erase(0, pos + delimiter.length());
+        
+        // Store burts sequence
+        token = process.substr(0, process.length()-2);
+        pcb_data.PC_line = token;
+        
         // set state as "NEW"
+        pcb_data.State = "NEW";
     }
     
     
@@ -50,12 +80,35 @@ public:
     pair<int, string> execute(Process P){
         busy = true;
         
+        // read CPU burst number, #, from the position
+        // "PositionOfNextInstructionToExecute
+        
+        // repeat calling Bubble Sort() for # fo times and then continue
+        
+        // If code runs out, return (PositionOfNextInstructionToExecute, "terminated"), then OS put it back in to ready queue
+        
+        // Otherwise, return (PositionOfNextInstructionToExecute+1, “wait”)
+        
+        // (namely, P has an I/O request and then OS remove it from the ready queue and sent it to I/O queue)
+        
+        
         // need to change this
         return make_pair(0, "0");
     }
     
-    void Bubble_Sort(){
+    void Bubble_Sort(vector<double>& list){
         // write bubble sort algorythm
+        
+        for (int i = 0; i < list.size() - 1; i++){
+            for (int j = 0; j < list.size() - i - 1; j++){
+                if (list[j] > list[j + 1]) {
+                    int temp = list[j];
+                    list[j] = list[j+1];
+                    list[j + 1] = temp;
+                }
+            }
+        }
+        
     }
     
     bool CPUisBusy(){
@@ -113,7 +166,26 @@ public:
 
 int main() {
     
-    cout << "Hello, World!" << endl;
+    // Open File
+    ifstream input;
+    input.open("input_file.txt");
+    if (input.is_open())
+    {
+        cout << "File opened" << endl;
+    }
+    
+    
+    // Get line from "input_file.txt" and create a process
+    string input_line;
+    while(!input.eof()){
+        getline(input, input_line);
+        Process p = Process(input_line);
+    }
+    
+    
+    
+    // Close File
+    input.close();
     
     return 0;
 }
